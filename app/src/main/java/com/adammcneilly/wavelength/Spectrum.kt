@@ -5,10 +5,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun Spectrum(
@@ -23,7 +27,35 @@ fun Spectrum(
         drawBackground()
 
         drawPointMarkers(state, pointSweepAngle)
+
+        drawGuessMarker(state)
     }
+}
+
+private fun DrawScope.drawGuessMarker(state: SpectrumState) {
+    drawCircle(
+        color = Color.Red,
+        radius = this.size.width / 8F,
+    )
+
+    // Using trigonometry to calculate x/y from polar coordinates of the guess marker.
+    val radius = size.width / 2.5F
+    val x = -(radius * sin(Math.toRadians(state.guessMarker.toDouble()))).toFloat() + (size.width / 2)
+    val y = (radius * cos(Math.toRadians(state.guessMarker.toDouble()))).toFloat() + (size.height / 2)
+
+    drawLine(
+        color = Color.Red,
+        start = Offset(
+            x = x,
+            y = y,
+        ),
+        end = Offset(
+            x = (this.size.width / 2),
+            y = (this.size.height / 2),
+        ),
+        strokeWidth = 25F,
+        cap = StrokeCap.Round,
+    )
 }
 
 private fun DrawScope.drawPointMarkers(
@@ -91,7 +123,7 @@ private fun UncoveredSpectrumPreview() {
     val state = SpectrumState(
         isCovered = false,
         pointMarker = -110,
-        guessMarker = 90,
+        guessMarker = 160,
     )
 
     Spectrum(
