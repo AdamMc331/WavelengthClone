@@ -123,7 +123,7 @@ private fun UncoveredSpectrumPreview() {
     val state = SpectrumState(
         isCovered = false,
         pointMarker = -110,
-        guessMarker = 160,
+        guessMarker = 260,
     )
 
     Spectrum(
