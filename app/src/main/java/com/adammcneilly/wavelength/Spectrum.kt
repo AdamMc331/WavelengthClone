@@ -38,10 +38,16 @@ private fun DrawScope.drawGuessMarker(state: SpectrumState) {
         radius = this.size.width / 8F,
     )
 
+    val semiCircleDegrees = 180F
+    val guessMarkerDegrees = state.guessMarkerPct * semiCircleDegrees
+    // Account for the fact that 0 is bottom center, we need to offset the bottom left quadrant before
+    // adding our degrees.
+    val guessMarkerOffset = guessMarkerDegrees + 90F
+
     // Using trigonometry to calculate x/y from polar coordinates of the guess marker.
     val radius = size.width / 2.5F
-    val x = -(radius * sin(Math.toRadians(state.guessMarker.toDouble()))).toFloat() + (size.width / 2)
-    val y = (radius * cos(Math.toRadians(state.guessMarker.toDouble()))).toFloat() + (size.height / 2)
+    val x = -(radius * sin(Math.toRadians(guessMarkerOffset.toDouble()))).toFloat() + (size.width / 2)
+    val y = (radius * cos(Math.toRadians(guessMarkerOffset.toDouble()))).toFloat() + (size.height / 2)
 
     drawLine(
         color = Color.Red,
@@ -62,7 +68,11 @@ private fun DrawScope.drawPointMarkers(
     state: SpectrumState,
     pointSweepAngle: Float,
 ) {
-    val midPointStartAngle = (state.pointMarker.toFloat()) - (pointSweepAngle / 2F)
+    val semiCircleStart = -180F
+    val totalCircleDegrees = 180F
+    val pointStartDegrees = (state.pointMarkerPct * totalCircleDegrees) + semiCircleStart
+    val midPointStartAngle = (pointStartDegrees) - (pointSweepAngle / 2F)
+
     drawArc(
         color = Color.Blue,
         startAngle = midPointStartAngle,
@@ -122,8 +132,8 @@ private fun DrawScope.drawBackground() {
 private fun UncoveredSpectrumPreview() {
     val state = SpectrumState(
         isCovered = false,
-        pointMarker = -110,
-        guessMarker = 260,
+        pointMarkerPct = 0.4F,
+        guessMarkerPct = 0.45F,
     )
 
     Spectrum(
